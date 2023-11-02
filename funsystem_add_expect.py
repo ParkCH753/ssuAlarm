@@ -14,6 +14,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import traceback
 import database
 
+import re
+
 # 브라우저 꺼짐 방지
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
@@ -24,6 +26,7 @@ service = Service(executable_path=ChromeDriverManager().install())
 
 funSystemURL =  "https://fun.ssu.ac.kr"
 path = "/ko/program/all/list/all"
+imgUriPattern = r'/attachment/view/\d+/cover\.jpg\?ts=\d+'
 
 def parsing(page, keyword, department):
     # 드라이버 생성 및 열기
@@ -53,8 +56,6 @@ def parsing(page, keyword, department):
                     .find_element(By.CLASS_NAME, "content").find_element(By.CLASS_NAME, "department")\
                     .find_element(By.CLASS_NAME, "institution").text
 
-
-
                 #서브 부서 타입 (단과대, 개설학과 꼴)
                 subDepartment = fun_html\
                     .find_element(By.CLASS_NAME, "content").find_element(By.CLASS_NAME, "department")\
@@ -74,6 +75,11 @@ def parsing(page, keyword, department):
                 signup = small_tag[2]
                 #operation = small_tag[3]
 
+                # 이미지 URI 추출
+                img_uri = fun_html.find_element(By.CLASS_NAME, "cover").get_attribute("style")
+                parsingImgUri = re.search(imgUriPattern, img_uri)
+                fullImgUrl = funSystemURL + parsingImgUri.group()
+
                 #시작 날짜
                 time = signup.find_elements(By.TAG_NAME, "time")
                 start_date = time[0].get_attribute("datetime").split('T')[0]
@@ -84,12 +90,14 @@ def parsing(page, keyword, department):
                 # oper_start_date = time[0].get_attribute("datetime")
                 # oper_dead_line = time[1].get_attribute("datetime")
                 if "예정" in day:
-                    program = Program(title = title, department = department, url = url, start_date=start_date, end_date=dead_line, remain_date=day)
+                    program = Program(title = title, department = department, url = url, start_date=start_date, end_date=dead_line, remain_date=day, img_url=fullImgUrl)
                     fun_list_expected.append(program)
                 else:
                     if "임박" in day : day = "D-day" #임박이면 오늘 끝나는 것.
-                    program = Program(title = title, department = department, url = url, start_date=start_date, end_date=dead_line, remain_date=day)
+                    program = Program(title = title, department = department, url = url, start_date=start_date, end_date=dead_line, remain_date=day, img_url=fullImgUrl)
                     fun_list.append(program)
+
+
                 
 
         #10초 이네에 페이지 로딩이 다 안되는 경우 ---> 펀시스템 에러
@@ -105,13 +113,14 @@ def parsing(page, keyword, department):
 
 
 class Program:
-    def __init__(self, title, department, url, start_date, end_date, remain_date):
+    def __init__(self, title, department, url, start_date, end_date, remain_date, img_url):
         self.title = title #프로그램 이름
         self.department = department #설계 부서
         self.URL = url #해당 펀시스템 url
         self.start_date = start_date
         self.end_date = end_date
         self.remain_date = remain_date
+        self.img_uri = img_url
 
     def __str__(self):
         return 'title : %s, department : %s, start_date = %s, end_date = %s, remain_date = %s, url = %s '%(self.title, self.department, self.start_date, self.end_date, self.remain_date, self.URL)
@@ -125,9 +134,9 @@ def to_json(fun_list):
 
 
 if __name__ == '__main__':
-    info_curr, info_expect = parsing(page=1, keyword=None, department=None)
+    #info_curr, info_expect = parsing(page=1, keyword=None, department=None)
 
-    #database.insert_funsystem("fun_system", to_json(info_curr)) # DB 초기화
+    #database.insert_funsystem(to_json(info_curr))
 
 
 
