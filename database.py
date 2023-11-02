@@ -4,6 +4,8 @@ from firebase_admin import db
 from dotenv import load_dotenv
 import os
 import json
+import traceback
+from firebase_admin import firestore
 
 load_dotenv()
 
@@ -26,10 +28,12 @@ def read_data(tree_name="fun_system"):
 def insert_funsystem(json_data, root_name="fun_system"):
     try:
         parsed_data = json.loads(json_data)
+        print(parsed_data)
         dir = db.reference(root_name)
-        dir.update(parsed_data)
+        dir.set(parsed_data)
     except Exception as e:
-        print("Json_data가 json화 되어있지 않음.")
+        print(traceback.format_exc())
+
 
 """
     알림 설정한 부서의 현재 펀시스템 신청 가능한 내역을 반환함
@@ -47,14 +51,18 @@ def read_specific_department(departments):
     #print(filtered_data)
     return filtered_data
 
-
 #추후 구현
 def update_activity(json_data, root_name='fun_system', ):
     print("추후 구현")
 
-#추후 구현
+
 def remove_activity():
-    print("추후 구현")
+    ref = db.reference('fun_system')
+    delete_data = ref.order_by_child('remain_date').equal_to("D-day")
+    data = delete_data.get()
+
+    for D_day in data:
+        ref.child(D_day).delete()
 
 #DB 초기화
 def init_db():
@@ -63,5 +71,6 @@ def init_db():
 
 #예제 코드
 def example():
-    return read_specific_department(['진로취업팀', '화학공학과'])
+    return read_specific_department(['IT대학'])
+
 
