@@ -43,9 +43,9 @@ def fun_department():
 	# 파라미터에서 부서 불러오기
 	request_data = json.loads(request.get_data(as_text=True))
 	params = request_data['action']['params']
-	pprint(params)
+	#pprint(params)
 	param_departments = params['fun_department']
-	pprint(param_departments)
+	#pprint(param_departments)
 
 	# department를 list로 만듬
 	department_list=[]
@@ -53,7 +53,9 @@ def fun_department():
 
 	# db에서 데이터 불러오기
 	data = db.read_specific_department(department_list)
-	pprint(data)
+	#pprint(data)
+	if(len(data)==0) :
+		return kakao.simple_text("해당하는 게시글이 없습니다.")
 
 	# 데이터 블록화 하기
 	items=[]
