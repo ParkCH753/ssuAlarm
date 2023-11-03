@@ -138,8 +138,3 @@ if __name__ == '__main__':
 
     #database.insert_funsystem(to_json(info_curr))
 
-
-
-
-
-
