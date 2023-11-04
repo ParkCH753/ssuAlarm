@@ -38,6 +38,28 @@ def day_of_the_week():
 	return jsonify(response)
 
 
+@application.route("/fun_closest",methods=["POST"])
+def fun_closest():
+
+	data=db.read_closest_deadline()
+
+	res = basic_card_carousel_fun(data)
+
+	return res
+
+
+@application.route("/fun_new",methods=["POST"])
+def fun_new():
+
+	# db에서 데이터 불러오기
+	data = db.read_new_post()
+	#pprint(data)
+
+	res = basic_card_carousel_fun(data)
+
+	return res
+
+
 @application.route("/fun_department",methods=["POST"])
 def fun_department():
 	# 파라미터에서 부서 불러오기
@@ -54,6 +76,14 @@ def fun_department():
 	# db에서 데이터 불러오기
 	data = db.read_specific_department(department_list)
 	#pprint(data)
+	
+	res=basic_card_carousel_fun(data)
+
+	return res
+
+
+def basic_card_carousel_fun(data):
+
 	if(len(data)==0) :
 		return kakao.simple_text("해당하는 게시글이 없습니다.")
 
@@ -70,10 +100,9 @@ def fun_department():
 		items.append(item)
 	
 	res = kakao.basic_card_carousel(items)
-	pprint(res)
 
 	return res
-
+	
 
 
 

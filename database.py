@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import os
 import json
 import traceback
+from dateutil import relativedelta
+from datetime import datetime
 from firebase_admin import firestore
 
 load_dotenv()
@@ -51,6 +53,32 @@ def read_specific_department(departments):
     #print(filtered_data)
     return filtered_data
 
+
+def read_new_post():
+    fun_data = read_data()
+    # 'start_date'를 기준으로 최근 10개 프로그램 저장
+    recent_programs = sorted(fun_data, key=lambda x: datetime.strptime(x['start_date'],
+                                 '%Y-%m-%d'), reverse=True)[:20]
+    return recent_programs
+
+
+# 'remain_date'를 기준으로 가장 적은 날 수로 정렬하고 10개 프로그램 저장
+def get_remaining_days(remain_date):
+    if remain_date.startswith('D-'):
+        if(remain_date=='D-day') :
+            return 0
+        return int(remain_date[2:])
+    return 9999
+
+
+def read_closest_deadline():
+    fun_data=read_data()
+    closest_deadline_post = sorted(fun_data,
+                 key=lambda x: get_remaining_days(x['remain_date']))[:20]
+
+    return closest_deadline_post
+
+
 #추후 구현
 def update_activity(json_data, root_name='fun_system', ):
     print("추후 구현")
@@ -72,5 +100,3 @@ def init_db():
 #예제 코드
 def example():
     return read_specific_department(['IT대학'])
-
-
