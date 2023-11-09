@@ -3,8 +3,15 @@ import sys, random, json, datetime
 import kakao_response as kakao
 import database as db
 from pprint import pprint
+#from apscheduler.schedulers.background import BackgroundScheduler
 application = Flask(__name__)
 
+# def printest():
+# 	return print_file.printf()
+#
+# sched = BackgroundScheduler(daemon=True, timezone="Asia/Seoul")
+# sched.add_job(printest, 'interval', seconds=2)
+# sched.start()
 
 @application.route("/random", methods=["POST"])
 def random_function():
@@ -108,4 +115,6 @@ def basic_card_carousel_fun(data):
 
 if __name__ == "__main__":
 	application.run(host='0.0.0.0', port=int(sys.argv[1]), debug=True)
+
+
 
