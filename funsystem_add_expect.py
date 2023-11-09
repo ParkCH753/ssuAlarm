@@ -136,4 +136,6 @@ def to_json(fun_list):
 if __name__ == '__main__':
     info_curr, info_expect = parsing(page=1, keyword=None, department=None)
     #database.insert_funsystem(to_json(info_curr))
+    #database.update_activity(json_data=to_json(info_curr))
+    #database.add_new_activity(to_json(info_curr))
 

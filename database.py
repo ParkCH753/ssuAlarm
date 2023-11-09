@@ -79,24 +79,70 @@ def read_closest_deadline():
     return closest_deadline_post
 
 
-#추후 구현
-def update_activity(json_data, root_name='fun_system', ):
-    print("추후 구현")
+'''
+    남은 날짜를 하루씩 땡긴다. 
+'''
+def update_activity(root_name='fun_system'):
+    ref = db.reference('fun_system').get(False, True)
+    xx = [*ref]
+    reff = db.reference('fun_system')
 
+    for x in xx:
+        update = db.reference('fun_system').child(x).get()
+        # print(update)
+        remain_date = update['remain_date']
+        if remain_date == 'D-1':
+            remain_date = 'D-Day'
+        elif remain_date != 'D-day':
+            integer = int(remain_date[2:]) - 1
+            remain_date = remain_date[:2] + str(integer)
+        update['remain_date'] = remain_date
+        # print(update)
+        # print()
+        #reff.child(x).update(update)
 
+'''
+    기존에 존재하는 데이터에서 데이터 추가 
+'''
+def add_new_activity(json_data, root_name='fun_system'):
+    parsed_data = json.loads(json_data)
+    print(len(parsed_data))
+    exisitingData = read_data()
+    add_list = []
+    for new_data in parsed_data:
+        flag = True
+        for ed in exisitingData:
+            if new_data['title'] in ed['title'] :
+                flag = False
+                continue
+        if flag is True :
+            add_list.append(new_data)
+    print(len(add_list))
+    print(add_list)
+    last_key_num = get_last_key()
+    increment = 1;
+    for add in add_list:
+        db.reference(root_name).child(str(last_key_num + increment)).set(add)
+        increment += 1
+
+'''
+    기한 지난 데이터 삭제
+'''
 def remove_activity():
     ref = db.reference('fun_system')
     delete_data = ref.order_by_child('remain_date').equal_to("D-day")
     data = delete_data.get()
-
+    print(data)
     for D_day in data:
-        ref.child(D_day).delete()
+         ref.child(D_day).delete()
 
 #DB 초기화
 def init_db():
     db.reference('fun_system').delete()
 
-
 #예제 코드
 def example():
     return read_specific_department(['IT대학'])
+
+def get_last_key():
+    return int(list(db.reference('fun_system').order_by_key().limit_to_last(1).get().keys())[0])
