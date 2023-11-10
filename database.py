@@ -17,6 +17,9 @@ firebase_admin.initialize_app(cred,
                               {'databaseURL' : os.environ.get('DATABASE_URL')}
 )
 
+root_name='fun_system'
+global_ref = db.reference(root_name)
+
 """
     현재 funSystem에 있는 활동을 가져옴 
 """
@@ -80,61 +83,70 @@ def read_closest_deadline():
 
 
 '''
-    남은 날짜를 하루씩 땡긴다. 
+    남은 날짜를 하루씩 땡긴다. D-day인 활동은 제거한다. 
 '''
 def update_activity(root_name='fun_system'):
-    ref = db.reference('fun_system').get(False, True)
-    xx = [*ref]
-    reff = db.reference('fun_system')
-
+    keys = global_ref.get(False, True)
+    xx = [*keys]
+    delete_count = 0;
     for x in xx:
-        update = db.reference('fun_system').child(x).get()
-        # print(update)
+        update = global_ref.child(x).get()
         remain_date = update['remain_date']
         if remain_date == 'D-1':
-            remain_date = 'D-Day'
+            remain_date = 'D-day'
+        elif remain_date == 'D-day':
+            global_ref.child(x).delete()
+            continue
         elif remain_date != 'D-day':
             integer = int(remain_date[2:]) - 1
             remain_date = remain_date[:2] + str(integer)
         update['remain_date'] = remain_date
-        # print(update)
-        # print()
-        #reff.child(x).update(update)
+        global_ref.child(x).update(update)
+
+
+    print("업데이트 완료.")
+    print("제거한 데이터 : ", delete_count)
 
 '''
     기존에 존재하는 데이터에서 데이터 추가 
 '''
 def add_new_activity(json_data, root_name='fun_system'):
     parsed_data = json.loads(json_data)
-    print(len(parsed_data))
     exisitingData = read_data()
+    filteringNone = [data for data in exisitingData if data is not None]
     add_list = []
     for new_data in parsed_data:
         flag = True
-        for ed in exisitingData:
+        for ed in filteringNone:
             if new_data['title'] in ed['title'] :
                 flag = False
-                continue
+                break
         if flag is True :
             add_list.append(new_data)
-    print(len(add_list))
-    print(add_list)
-    last_key_num = get_last_key()
-    increment = 1;
-    for add in add_list:
-        db.reference(root_name).child(str(last_key_num + increment)).set(add)
-        increment += 1
+    if add_list : #추가할 데이터가 있으면
+        print(add_list)
+        last_key_num = get_last_key()
+        increment = 1
+        for add in add_list:
+            db.reference(root_name).child(str(last_key_num + increment)).set(add)
+            increment += 1
+        print("추가한 데이터 : ", (increment-1))
+    else :
+        print("추가할 액티비티가 없습니다!")
 
 '''
-    기한 지난 데이터 삭제
+    기한 지난 데이터 삭제 --> 사용 X 
 '''
-def remove_activity():
-    ref = db.reference('fun_system')
-    delete_data = ref.order_by_child('remain_date').equal_to("D-day")
-    data = delete_data.get()
-    print(data)
-    for D_day in data:
-         ref.child(D_day).delete()
+# def remove_activity():
+#     ref = db.reference('fun_system')
+#     delete_data = ref.order_by_child('remain_date').equal_to("D-Day")
+#     data = delete_data.get()
+#     print(data)
+#     count = 0
+#     for d_day in data:
+#         count += 1
+#          #ref.child(D_day).delete()
+#     print(count)
 
 #DB 초기화
 def init_db():
@@ -146,3 +158,4 @@ def example():
 
 def get_last_key():
     return int(list(db.reference('fun_system').order_by_key().limit_to_last(1).get().keys())[0])
+
