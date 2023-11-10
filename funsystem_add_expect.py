@@ -131,11 +131,14 @@ class Program:
 def to_json(fun_list):
     return json.dumps(fun_list, default=lambda o: o.__dict__, indent=4, ensure_ascii=False)
 
-
-
-if __name__ == '__main__':
+def crawling_funsystem():
     info_curr, info_expect = parsing(page=1, keyword=None, department=None)
-    #database.insert_funsystem(to_json(info_curr))
-    #database.update_activity(json_data=to_json(info_curr))
-    #database.add_new_activity(to_json(info_curr))
+    database.add_new_activity(to_json(info_curr))
+
+def init_funSystem():
+    info_curr, info_expect = parsing(page=1, keyword=None, department=None)
+    database.init_db()
+    database.insert_funsystem(to_json(info_curr))
+
+
 
