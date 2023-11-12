@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <!-- 상단바와 툴바 -->
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <!-- 좌측에 원형 버튼 -->
+            <ImageButton
+                android:id="@+id/circularButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/circular_button_description"
+                android:padding="8dp"
+                android:src="@drawable/icon" />
+            <!-- 체크박스 1 -->
+            <CheckBox
+                android:id="@+id/checkBox1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="8dp"
+                android:textColor="#000000"
+                android:textColorHint="#80000000"
+                android:textStyle="bold"
+                android:text="@string/deadline_sort"
+                android:textSize="20sp"/>
+
+            <!-- 체크박스 2 -->
+            <CheckBox
+                android:id="@+id/checkBox2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="8dp"
+                android:textColor="#000000"
+                android:textColorHint="#80000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="@string/latest_sort" />
+
+            <!-- 버튼 오른쪽에 사람 이름 -->
+            <TextView
+                android:id="@+id/personNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="60dp"
+                android:padding="8dp"
+                android:text="@string/user_name"
+                android:background="?attr/colorPrimary"
+                android:textColor="@android:black"
+                android:textSize="18sp" /> <!-- 여기서 2dp를 더해서 18dp로 설정 -->
+
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 검색바 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/some_id"
+        android:layout_width="300dp"
+        android:layout_height="36dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/gray_bg">
+
+        <ImageButton
+            android:id="@+id/searchButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="4dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="8dp"
+            android:src="@drawable/search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.545" />
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingStart="30dp"
+            android:textColor="#83000000"
+            android:textColorHint="#80000000"
+            app:autofillHints="search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- 정렬기준 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/check_list"
+        android:layout_width="400dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/gray_bg">
+
+        <!-- 검색박스 1 -->
+
+        <CheckBox
+            android:id="@+id/searchCheckBox1"
+            android:layout_width="76dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="36dp"
+            android:text="@string/major"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 검색박스 2 -->
+        <CheckBox
+            android:id="@+id/searchCheckBox2"
+            android:layout_width="81dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/year"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/searchCheckBox1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- 행사 리스트 나열-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appBarLayout"
+        android:layout_marginTop="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/check_list" />
+
+
+</RelativeLayout>

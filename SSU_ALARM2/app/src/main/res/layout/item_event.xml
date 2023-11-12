@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_event.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- 이 부분이 각 아이템을 나타내는 나머지 뷰들 -->
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Title"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/summaryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Summary"
+        android:textSize="16sp"
+        android:layout_below="@id/titleTextView"
+        android:layout_marginTop="8dp"/>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@id/summaryTextView"
+        android:layout_marginTop="8dp"/>
+</RelativeLayout>
