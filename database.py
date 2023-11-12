@@ -25,7 +25,9 @@ global_ref = db.reference(root_name)
 """
 def read_data(tree_name="fun_system"):
     dir = db.reference(tree_name)
-    return dir.get()
+    exisitingData = dir.get()
+    filteringNone = [data for data in exisitingData if data is not None]
+    return filteringNone
 
 """
     fun_System DB가 완전히 비어있는 경우 초기화
